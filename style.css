@@ -4,5 +4,45 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 15px;
-    background-color: #89da8a;
+    background-color: #c2d5c3;
+}
+
+#panel {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(60, 15px);
+    grid-template-rows: repeat(40, 15px);
+    border-top: 1px solid #cccccc;
+    border-left: 1px solid #cccccc;
+    background-color: #fdfeff;
+}
+
+.cell {
+    width: 15px;
+    height: 15px;
+    background-color: #fdfeff;
+    border-right: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.player-1 {
+    background-color: #1d4ed8;
+}
+.player-2 {
+    background-color: #dc2626;
 }
