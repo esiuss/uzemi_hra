@@ -1,5 +1,5 @@
-const width = 40;
-const height = 60;
+const width = 60;
+const height = 40;
 
 let board = [];
 let currentPlayer = 1;
@@ -42,6 +42,7 @@ function onCellClick(e) {
     if (board[r][c] !== 0) return;
 
     board[r][c] = currentPlayer;
+    checkTerritories(currentPlayer);
 
      if (!hasFreeCells()) {
     endGame();
@@ -114,5 +115,73 @@ giveUpBtn.addEventListener("click", () => {
 });
 
 resetBtn.addEventListener("click", initGame);
+
+/**
+* AI generated
+* Model: Gemini 4 Argon
+ */
+function checkTerritories(player) {
+  const opponent = player === 1 ? 2 : 1;
+  const visited = Array.from({ length: height }, () => Array(width).fill(false));
+  const dirs = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1]
+  ];
+
+  const regions = [];
+  let mainOutsideRegion = null;
+
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      if (visited[r][c] || board[r][c] === player) continue;
+
+      const cells = [];
+      const queue = [[r, c]];
+      visited[r][c] = true;
+      let touchesEdge = false;
+      let hasOpponent = false;
+
+      while (queue.length > 0) {
+        const [cr, cc] = queue.shift();
+        cells.push([cr, cc]);
+
+        if (board[cr][cc] === opponent) {
+          hasOpponent = true;
+        }
+
+        for (const [dr, dc] of dirs) {
+          const nr = cr + dr;
+          const nc = cc + dc;
+
+          if (nr < 0 || nr >= height || nc < 0 || nc >= width) {
+            touchesEdge = true;
+          } else if (!visited[nr][nc] && board[nr][nc] !== player) {
+            visited[nr][nc] = true;
+            queue.push([nr, nc]);
+          }
+        }
+      }
+
+      const regionObj = { cells, touchesEdge, hasOpponent };
+      regions.push(regionObj);
+
+      if (touchesEdge) {
+        if (!mainOutsideRegion || cells.length > mainOutsideRegion.cells.length) {
+          mainOutsideRegion = regionObj;
+        }
+      }
+    }
+  }
+
+  for (const region of regions) {
+    if (region !== mainOutsideRegion && region.hasOpponent) {
+      for (const [cr, cc] of region.cells) {
+        board[cr][cc] = player;
+      }
+    }
+  }
+}
 
 initGame();
